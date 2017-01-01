@@ -364,6 +364,10 @@ function validateInfo(){
 
 }
 
+$("button").click(function(event){
+    event.preventDefault();
+});
+
 //Call all functions
 validateInfo();
 paymentInfo();

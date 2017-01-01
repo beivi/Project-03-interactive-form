@@ -11,6 +11,8 @@ $(document).ready(function(){
 
 });
 
+
+
 //Label to hold activity checkbox totals
 var totalLabel = $("<label></label>");
 
@@ -69,7 +71,7 @@ function shirtInfo() {
     $("#design").change(function(){
         var $selected = $("#design").find(":selected").val();
 
-        //Hiding colors until ddsign is choosen
+        //Hiding colors until design is choosen
         if($selected !== 'Select Theme'){
             $(".colors").show();
         } else {
@@ -252,6 +254,7 @@ function validateInfo(){
             blurErrorCss("#mail");
 
             $("label[for='mail']").append($emailError);
+            event.preventDefault();
 
         } else {
 
@@ -278,6 +281,7 @@ function validateInfo(){
             blurErrorCss("#name");
 
             $("label[for='name']").append($nameError);
+            event.preventDefault();
 
         } else {
 
@@ -295,12 +299,15 @@ function validateInfo(){
         var $checkbox = $(".activities").find(":checked").val();
         if ($checkbox !== 'on'){
             $(".activities legend").css({"color" : "#c0392b"}).text("Register for Activities (Please Select At Least One Activity)");
+            event.preventDefault();
+
         } else {
             $(".activities legend").css({"color" : "#184f68"}).text("Register for Activities");
         }
 
         //Validate payment info
-        //Activate all error messages based on different error conditions
+        //Activate all error messages based on
+            //different error conditions
         var $creditInfo = $("#cc-num").val();
 
         if($.isNumeric($creditInfo) === false || ($creditInfo.length === 0)){
@@ -308,11 +315,15 @@ function validateInfo(){
             focusErrorCss("#cc-num");
             blurErrorCss("#cc-num");
             $($cardNumEspace).text("Please Enter Valid Credit Card Number").css({"color" : "#c0392b"});
+            event.preventDefault();
+
         } else if ($.isNumeric($creditInfo) === true && ($creditInfo.length < 13)){
             $("#cc-num").css({"border" : "3px solid #c0392b", "background-color" : "#d98880"});
             focusErrorCss("#cc-num");
             blurErrorCss("#cc-num");
             $($cardNumEspace).text("Please Enter Number At Least 13 Digits Long").css({"color" : "#c0392b", "font-size" : ".94em"});
+            event.preventDefault();
+
         } else {
             $($cardNumEspace).html("&nbsp;");
             $("#cc-num").css({"background": "#c1deeb", "border" : "2px solid #c1deeb"});
@@ -321,52 +332,81 @@ function validateInfo(){
 
         }
 
+        //Validate cvv and zip when submit is pressed
+        var $cvv = $("#cvv").val();
+        if($.isNumeric($cvv) === false || ($cvv.length < 3 || $cvv.length > 3)) {
+            cvvError();
+        } else {
+            cvvValid();
+        }
+
+        var $zipCode = $("#zip").val();
+        if($.isNumeric($zipCode) === false || ($zipCode.length !== 5)) {
+            zipError();
+        } else {
+            zipValid();
+        }
+
 
 
     });
+
+    //Functions for cvv error css and valid css
+    function cvvError(){
+        $("#cvv").css({"border" : "3px solid #c0392b", "background-color" : "#d98880"});
+        focusErrorCss("#cvv");
+        blurErrorCss("#cvv");
+        $($cvvEspace).text("Please Enter 3 Digits").css({"color" : "#c0392b", "font-size" : ".9em"});
+        event.preventDefault();
+    }
+
+    function cvvValid(){
+        $($cvvEspace).html("&nbsp;");
+        $("#cvv").css({"background": "#c1deeb", "border" : "2px solid #c1deeb"});
+        blurCss("#cvv");
+        focusCss("#cvv");
+    }
 
     //Validate cvv in real-time
     //on keyup
     $("#cvv").keyup(function(){
         var $cvv = $("#cvv").val();
-        if($.isNumeric($cvv) === false || ($cvv.length < 3 || $cvv.length > 3)) {
-            $("#cvv").css({"border" : "3px solid #c0392b", "background-color" : "#d98880"});
-            focusErrorCss("#cvv");
-            blurErrorCss("#cvv");
-            $($cvvEspace).text("Please Enter 3 Digits").css({"color" : "#c0392b", "font-size" : ".9em"});
-        } else {
-            $($cvvEspace).html("&nbsp;");
-            $("#cvv").css({"background": "#c1deeb", "border" : "2px solid #c1deeb"});
-            blurCss("#cvv");
-            focusCss("#cvv");
-        }
+            if($.isNumeric($cvv) === false || ($cvv.length < 3 || $cvv.length > 3)) {
+                cvvError();
+            } else {
+                cvvValid();
+            }
     });
 
+    //Functions for zip code error css and valid css
+    function zipError(){
+        $("#zip").css({"border" : "3px solid #c0392b", "background-color" : "#d98880"});
+        focusErrorCss("#zip");
+        blurErrorCss("#zip");
+        $($zipEspace).text("Please Enter 5 Digits").css({"color" : "#c0392b", "font-size" : ".9em"});
+        event.preventDefault();
+    }
+
+    function zipValid(){
+        $($zipEspace).html("&nbsp;");
+        $("#zip").css({"background": "#c1deeb", "border" : "2px solid #c1deeb"});
+        focusCss("#zip");
+        blurCss("#zip");
+    }
 
     //Validate zip in real-time
     //on keyup
     $("#zip").keyup(function(){
         var $zipCode = $("#zip").val();
-
         if($.isNumeric($zipCode) === false || ($zipCode.length !== 5)) {
-            $("#zip").css({"border" : "3px solid #c0392b", "background-color" : "#d98880"});
-            focusErrorCss("#zip");
-            blurErrorCss("#zip");
-            $($zipEspace).text("Please Enter 5 Digits").css({"color" : "#c0392b", "font-size" : ".9em"});
+            zipError();
         } else {
-            $($zipEspace).html("&nbsp;");
-            $("#zip").css({"background": "#c1deeb", "border" : "2px solid #c1deeb"});
-            focusCss("#zip");
-            blurCss("#zip");
+            zipValid();
         }
     });
 
 
 }
-
-$("button").click(function(event){
-    event.preventDefault();
-});
 
 //Call all functions
 validateInfo();
